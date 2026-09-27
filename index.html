@@ -1,1 +1,2071 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Gewinner der Woche</title>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+/* =========================================================
+   FONTS
+========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background: #020202;
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+
+    cursor: url("cursor.png") 0 0, auto;
+}
+
+button,
+a,
+.card {
+    cursor: url("cursor.png") 0 0, pointer;
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+body::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    z-index: -30;
+
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(255,255,255,.12),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            circle at 0% 50%,
+            rgba(100,140,255,.045),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            circle at 100% 70%,
+            rgba(255,80,160,.035),
+            transparent 35%
+        ),
+
+        #020202;
+}
+
+
+/* =========================================================
+   MOVING AURORA
+========================================================= */
+
+.aurora {
+    position: fixed;
+    inset: -30%;
+
+    z-index: -25;
+
+    pointer-events: none;
+
+    background:
+        conic-gradient(
+            from 180deg,
+            transparent,
+            rgba(255,255,255,.035),
+            transparent,
+            rgba(100,150,255,.025),
+            transparent
+        );
+
+    filter: blur(100px);
+
+    animation:
+        auroraMove 18s ease-in-out infinite alternate;
+}
+
+@keyframes auroraMove {
+
+    0% {
+        transform:
+            rotate(0deg)
+            scale(1);
+    }
+
+    100% {
+        transform:
+            rotate(18deg)
+            scale(1.18);
+    }
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.grid {
+    position: fixed;
+    inset: 0;
+
+    z-index: -20;
+
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,.028) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.028) 1px,
+            transparent 1px
+        );
+
+    background-size: 65px 65px;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            black,
+            transparent 85%
+        );
+
+    animation:
+        gridMove 24s linear infinite;
+}
+
+@keyframes gridMove {
+
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 65px 65px;
+    }
+}
+
+
+/* =========================================================
+   ORBS
+========================================================= */
+
+.orb {
+    position: fixed;
+
+    border-radius: 50%;
+
+    filter: blur(100px);
+
+    pointer-events: none;
+
+    z-index: -22;
+}
+
+.orb.one {
+    width: 500px;
+    height: 500px;
+
+    left: -250px;
+    top: 20%;
+
+    background: rgba(255,255,255,.045);
+
+    animation:
+        orbOne 13s ease-in-out infinite alternate;
+}
+
+.orb.two {
+    width: 600px;
+    height: 600px;
+
+    right: -300px;
+    top: 45%;
+
+    background: rgba(255,255,255,.03);
+
+    animation:
+        orbTwo 17s ease-in-out infinite alternate;
+}
+
+@keyframes orbOne {
+
+    0% {
+        transform:
+            translate(0,0);
+    }
+
+    100% {
+        transform:
+            translate(300px,-130px);
+    }
+}
+
+@keyframes orbTwo {
+
+    0% {
+        transform:
+            translate(0,0);
+    }
+
+    100% {
+        transform:
+            translate(-220px,100px);
+    }
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+#particles {
+    position: fixed;
+    inset: 0;
+
+    z-index: -10;
+
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+        0 0 12px rgba(255,255,255,.7);
+
+    animation:
+        particleUp linear infinite;
+}
+
+@keyframes particleUp {
+
+    from {
+        transform:
+            translateY(110vh);
+
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .35;
+    }
+
+    80% {
+        opacity: .18;
+    }
+
+    to {
+        transform:
+            translateY(-15vh)
+            translateX(80px);
+
+        opacity: 0;
+    }
+}
+
+
+/* =========================================================
+   TOP NAV
+========================================================= */
+
+.topbar {
+    width: min(1200px, 92%);
+
+    margin: 24px auto 0;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #777;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 3px;
+}
+
+.logo-dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    box-shadow:
+        0 0 10px white;
+}
+
+.live {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 9px 13px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(255,255,255,.035);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    color: #777;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+}
+
+.live-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #47ee82;
+
+    box-shadow:
+        0 0 12px rgba(71,238,130,.8);
+
+    animation:
+        livePulse 1.5s infinite;
+}
+
+@keyframes livePulse {
+
+    0%,100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: .35;
+        transform: scale(.65);
+    }
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+    text-align: center;
+
+    padding:
+        90px 20px 55px;
+}
+
+.hero-line {
+    width: 110px;
+    height: 2px;
+
+    margin: 0 auto 28px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            white,
+            transparent
+        );
+
+    box-shadow:
+        0 0 15px rgba(255,255,255,.65);
+}
+
+.eyebrow {
+    font-size: 10px;
+
+    letter-spacing: 7px;
+
+    color: #696969;
+
+    font-weight: 900;
+
+    margin-bottom: 18px;
+}
+
+.hero h1 {
+    font-size:
+        clamp(48px, 8vw, 96px);
+
+    line-height: .92;
+
+    font-weight: 900;
+
+    letter-spacing: -6px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fff 0%,
+            #e5e5e5 35%,
+            #707070 100%
+        );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero h1 span {
+    background:
+        linear-gradient(
+            90deg,
+            #fff,
+            #777,
+            #fff,
+            #aaa,
+            #fff
+        );
+
+    background-size: 300% auto;
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    animation:
+        textShine 5s linear infinite;
+}
+
+@keyframes textShine {
+
+    from {
+        background-position: 300% center;
+    }
+
+    to {
+        background-position: -300% center;
+    }
+}
+
+.hero-subtitle {
+    margin-top: 22px;
+
+    color: #666;
+
+    font-size: 13px;
+
+    letter-spacing: 2px;
+}
+
+.hero-glow {
+    width: 240px;
+    height: 2px;
+
+    margin: 28px auto 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #fff,
+            transparent
+        );
+
+    box-shadow:
+        0 0 12px rgba(255,255,255,.5),
+        0 0 40px rgba(255,255,255,.18);
+
+    animation:
+        heroGlow 3s ease-in-out infinite;
+}
+
+@keyframes heroGlow {
+
+    0%,100% {
+        opacity: .35;
+        transform: scaleX(.7);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scaleX(1.08);
+    }
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.stats {
+    width: min(900px, 92%);
+
+    margin: 0 auto 55px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 14px;
+}
+
+.stat {
+    padding: 20px;
+
+    text-align: center;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.05),
+            rgba(255,255,255,.018)
+        );
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    backdrop-filter: blur(18px);
+}
+
+.stat-number {
+    font-size: 25px;
+
+    font-weight: 900;
+}
+
+.stat-label {
+    margin-top: 5px;
+
+    color: #5c5c5c;
+
+    text-transform: uppercase;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.container {
+    width: min(1200px, 92%);
+
+    margin: auto;
+
+    padding-bottom: 100px;
+}
+
+
+/* =========================================================
+   SECTION TITLE
+========================================================= */
+
+.section-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: end;
+
+    margin-bottom: 24px;
+}
+
+.section-heading h2 {
+    font-size: 25px;
+
+    font-weight: 900;
+
+    letter-spacing: -.8px;
+}
+
+.section-heading p {
+    margin-top: 7px;
+
+    color: #5e5e5e;
+
+    font-size: 11px;
+}
+
+.updated {
+    color: #505050;
+
+    font-size: 10px;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   WINNER GRID
+========================================================= */
+
+.winner-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 20px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.card {
+    --accent: #ffffff;
+    --glow: rgba(255,255,255,.15);
+
+    position: relative;
+
+    min-height: 255px;
+
+    padding: 28px;
+
+    overflow: hidden;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(27,27,27,.9),
+            rgba(6,6,6,.84)
+        );
+
+    border:
+        1px solid rgba(255,255,255,.075);
+
+    backdrop-filter: blur(22px);
+
+    transition:
+        transform .4s ease,
+        border-color .4s ease,
+        box-shadow .4s ease;
+}
+
+.card:hover {
+
+    transform:
+        translateY(-9px);
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 65%,
+            white 10%
+        );
+
+    box-shadow:
+        0 28px 80px rgba(0,0,0,.65),
+        0 0 38px var(--glow);
+}
+
+
+/* animated shine */
+
+.card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 260px;
+    height: 260px;
+
+    top: -150px;
+    left: -130px;
+
+    background:
+        radial-gradient(
+            circle,
+            color-mix(
+                in srgb,
+                var(--accent) 18%,
+                transparent
+            ),
+            transparent 70%
+        );
+
+    filter: blur(20px);
+
+    transition:
+        transform .6s ease;
+}
+
+.card:hover::before {
+    transform:
+        translate(120px,100px);
+}
+
+
+/* bottom glow */
+
+.card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 240px;
+    height: 240px;
+
+    right: -150px;
+    bottom: -160px;
+
+    border-radius: 50%;
+
+    background:
+        var(--accent);
+
+    opacity: .045;
+
+    filter: blur(25px);
+
+    transition: .4s;
+}
+
+.card:hover::after {
+    opacity: .14;
+}
+
+
+/* =========================================================
+   CARD TOP
+========================================================= */
+
+.card-top {
+    position: relative;
+
+    z-index: 3;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.category-icon {
+    width: 55px;
+    height: 55px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 17px;
+
+    background:
+        rgba(255,255,255,.035);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    font-size: 24px;
+
+    box-shadow:
+        0 0 25px var(--glow);
+}
+
+.place {
+    font-size: 10px;
+
+    color: #505050;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   TROPHY
+========================================================= */
+
+.trophy {
+    font-size: 26px;
+
+    filter:
+        drop-shadow(
+            0 0 9px var(--accent)
+        );
+
+    animation:
+        trophyFloat 2.6s ease-in-out infinite;
+}
+
+@keyframes trophyFloat {
+
+    0%,100% {
+        transform:
+            translateY(0)
+            rotate(0deg);
+    }
+
+    50% {
+        transform:
+            translateY(-5px)
+            rotate(2deg);
+    }
+}
+
+
+/* =========================================================
+   CATEGORY
+========================================================= */
+
+.category-name {
+    position: relative;
+
+    z-index: 3;
+
+    margin-top: 25px;
+
+    color:
+        var(--accent);
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 2px;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   WINNER
+========================================================= */
+
+.winner-name {
+    position: relative;
+
+    z-index: 3;
+
+    margin-top: 10px;
+
+    font-size:
+        clamp(25px, 3vw, 34px);
+
+    font-weight: 900;
+
+    letter-spacing: -1.2px;
+
+    color: white;
+}
+
+
+/* =========================================================
+   VOTES
+========================================================= */
+
+.vote-count {
+    position: relative;
+
+    z-index: 3;
+
+    margin-top: 11px;
+
+    color: #626262;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   ACCENT LINE
+========================================================= */
+
+.accent-line {
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--accent),
+            transparent
+        );
+
+    opacity: .75;
+
+    box-shadow:
+        0 0 20px var(--glow);
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status {
+    position: absolute;
+
+    right: 25px;
+    bottom: 22px;
+
+    z-index: 4;
+
+    padding:
+        7px 10px;
+
+    border-radius: 999px;
+
+    color:
+        var(--accent);
+
+    background:
+        rgba(255,255,255,.025);
+
+    border:
+        1px solid rgba(255,255,255,.06);
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.4px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   COLORS
+========================================================= */
+
+.supporter {
+    --accent: #39e878;
+    --glow: rgba(57,232,120,.22);
+}
+
+.moderator {
+    --accent: #438cff;
+    --glow: rgba(67,140,255,.22);
+}
+
+.analyst {
+    --accent: #9a9a9a;
+    --glow: rgba(170,170,170,.13);
+}
+
+.fraktion {
+    --accent: #6ddcff;
+    --glow: rgba(109,220,255,.22);
+}
+
+.admin {
+    --accent: #ffd83d;
+    --glow: rgba(255,216,61,.22);
+}
+
+.teamleitung {
+    --accent: #ff63cb;
+    --glow: rgba(255,99,203,.22);
+}
+
+.projektleitung {
+    --accent: #ff4646;
+    --glow: rgba(255,70,70,.22);
+}
+
+.projektinhaber {
+    --accent: #ffffff;
+    --glow: rgba(255,255,255,.18);
+}
+
+
+/* =========================================================
+   EMPTY / ERROR
+========================================================= */
+
+.message {
+    grid-column: 1 / -1;
+
+    padding: 40px;
+
+    text-align: center;
+
+    border-radius: 22px;
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    background:
+        rgba(255,255,255,.025);
+
+    color: #666;
+
+    font-size: 13px;
+}
+
+.message strong {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #fff;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+    padding: 35px 20px;
+
+    text-align: center;
+
+    border-top:
+        1px solid rgba(255,255,255,.05);
+
+    color: #3f3f3f;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .winner-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .topbar {
+        margin-top: 16px;
+    }
+
+    .hero {
+        padding-top: 65px;
+    }
+
+    .hero h1 {
+        font-size: 48px;
+
+        letter-spacing: -4px;
+    }
+
+    .eyebrow {
+        letter-spacing: 4px;
+    }
+
+    .card {
+        min-height: 245px;
+
+        padding: 24px;
+    }
+
+    .winner-name {
+        font-size: 27px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     BACKGROUND
+========================================================= -->
+
+<div class="aurora"></div>
+
+<div class="grid"></div>
+
+<div class="orb one"></div>
+<div class="orb two"></div>
+
+<div id="particles"></div>
+
+
+
+<!-- =========================================================
+     TOPBAR
+========================================================= -->
+
+<div class="topbar">
+
+    <div class="logo">
+
+        <span class="logo-dot"></span>
+
+        TEAM AWARDS
+
+    </div>
+
+
+    <div class="live">
+
+        <span class="live-dot"></span>
+
+        LIVE
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<header class="hero">
+
+    <div class="hero-line"></div>
+
+    <div class="eyebrow">
+        WÖCHENTLICHE AUSZEICHNUNG
+    </div>
+
+    <h1>
+        GEWINNER
+        <span>DER WOCHE</span>
+    </h1>
+
+    <div class="hero-subtitle">
+        Die herausragenden Teammitglieder dieser Woche
+    </div>
+
+    <div class="hero-glow"></div>
+
+</header>
+
+
+
+<!-- =========================================================
+     STATS
+========================================================= -->
+
+<div class="stats">
+
+    <div class="stat">
+
+        <div
+            class="stat-number"
+            id="categoryCount"
+        >
+            8
+        </div>
+
+        <div class="stat-label">
+            Kategorien
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div
+            class="stat-number"
+            id="voteTotal"
+        >
+            —
+        </div>
+
+        <div class="stat-label">
+            Stimmen insgesamt
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div
+            class="stat-number"
+            id="statusText"
+        >
+            LIVE
+        </div>
+
+        <div class="stat-label">
+            Systemstatus
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     CONTENT
+========================================================= -->
+
+<main class="container">
+
+
+    <div class="section-header">
+
+        <div class="section-heading">
+
+            <h2>
+                🏆 Unsere Gewinner
+            </h2>
+
+            <p>
+                Jede Kategorie hat ihren Gewinner der Woche.
+            </p>
+
+        </div>
+
+
+        <div
+            class="updated"
+            id="updated"
+        >
+            Wird geladen...
+        </div>
+
+    </div>
+
+
+
+    <div
+        class="winner-grid"
+        id="winnerGrid"
+    >
+
+        <div class="message">
+
+            <strong>
+                Gewinner werden geladen...
+            </strong>
+
+            Bitte einen Moment warten.
+
+        </div>
+
+    </div>
+
+
+</main>
+
+
+
+<footer>
+
+    TEAM AWARDS
+    •
+    GEWINNER DER WOCHE
+
+</footer>
+
+
+
+<script>
+
+/* =========================================================
+   SUPABASE KONFIGURATION
+========================================================= */
+
+/*
+   HIER DEINE SUPABASE DATEN EINTRAGEN.
+
+   Project URL:
+   https://DEIN-PROJEKT.supabase.co
+
+   Publishable Key:
+   sb_publishable_...
+
+   NICHT den secret/service_role Key benutzen.
+*/
+
+const SUPABASE_URL =
+    "HIER_DEINE_PROJECT_URL";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "HIER_DEIN_PUBLISHABLE_KEY";
+
+
+/* =========================================================
+   MANUELLE FALLBACK-GEWINNER
+========================================================= */
+
+/*
+   Falls Supabase noch nicht verbunden ist,
+   werden diese Namen angezeigt.
+
+   Du kannst sie auch manuell ändern.
+*/
+
+const MANUAL_WINNERS = {
+
+    "Supporter": "Noch offen",
+
+    "Moderator": "Noch offen",
+
+    "Analyst": "Noch offen",
+
+    "Fraktionsverwaltung": "Noch offen",
+
+    "Admin": "Noch offen",
+
+    "Teamleitung": "Noch offen",
+
+    "Projektleitung": "Noch offen",
+
+    "Projektinhaber": "Noch offen"
+
+};
+
+
+/* =========================================================
+   KATEGORIEN
+========================================================= */
+
+const categories = [
+
+    {
+        name: "Supporter",
+        icon: "🟢",
+        className: "supporter"
+    },
+
+    {
+        name: "Moderator",
+        icon: "🔵",
+        className: "moderator"
+    },
+
+    {
+        name: "Analyst",
+        icon: "⚫",
+        className: "analyst"
+    },
+
+    {
+        name: "Fraktionsverwaltung",
+        icon: "🔷",
+        className: "fraktion"
+    },
+
+    {
+        name: "Admin",
+        icon: "🟡",
+        className: "admin"
+    },
+
+    {
+        name: "Teamleitung",
+        icon: "🩷",
+        className: "teamleitung"
+    },
+
+    {
+        name: "Projektleitung",
+        icon: "🔴",
+        className: "projektleitung"
+    },
+
+    {
+        name: "Projektinhaber",
+        icon: "⚪",
+        className: "projektinhaber"
+    }
+
+];
+
+
+/* =========================================================
+   SUPABASE CLIENT
+========================================================= */
+
+let supabaseClient = null;
+
+const supabaseConfigured =
+    SUPABASE_URL.startsWith("https://") &&
+    SUPABASE_PUBLISHABLE_KEY &&
+    !SUPABASE_PUBLISHABLE_KEY.includes("HIER_DEIN");
+
+
+if (supabaseConfigured) {
+
+    supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+        );
+
+}
+
+
+/* =========================================================
+   PARTIKEL
+========================================================= */
+
+const particleContainer =
+    document.getElementById("particles");
+
+
+for (let i = 0; i < 85; i++) {
+
+    const particle =
+        document.createElement("div");
+
+    particle.className =
+        "particle";
+
+    const size =
+        1 + Math.random() * 3;
+
+    particle.style.width =
+        size + "px";
+
+    particle.style.height =
+        size + "px";
+
+    particle.style.left =
+        Math.random() * 100 + "%";
+
+    particle.style.animationDuration =
+        (8 + Math.random() * 18) + "s";
+
+    particle.style.animationDelay =
+        (-Math.random() * 20) + "s";
+
+    particleContainer.appendChild(
+        particle
+    );
+
+}
+
+
+/* =========================================================
+   WINNER CARDS ERSTELLEN
+========================================================= */
+
+function createCards(winners) {
+
+    const grid =
+        document.getElementById(
+            "winnerGrid"
+        );
+
+    grid.innerHTML = "";
+
+    categories.forEach(
+        (category, index) => {
+
+            const info =
+                winners[category.name] || {
+                    name: "Noch offen",
+                    votes: 0
+                };
+
+
+            const card =
+                document.createElement("article");
+
+            card.className =
+                "card " +
+                category.className;
+
+
+            const name =
+                info.name || "Noch offen";
+
+
+            const votes =
+                Number(info.votes) || 0;
+
+
+            let voteText =
+                votes === 1
+                    ? "1 Stimme"
+                    : votes + " Stimmen";
+
+
+            if (
+                name === "Noch offen" ||
+                name === "Gleichstand"
+            ) {
+
+                voteText =
+                    "Noch keine eindeutige Entscheidung";
+
+            }
+
+
+            card.innerHTML = `
+
+                <div class="card-top">
+
+                    <div class="category-icon">
+                        ${category.icon}
+                    </div>
+
+                    <div class="place">
+                        ${String(index + 1).padStart(2, "0")}
+                    </div>
+
+                </div>
+
+
+                <div class="category-name">
+                    ${category.name}
+                </div>
+
+
+                <div class="winner-name">
+                    ${escapeHtml(name)}
+                </div>
+
+
+                <div class="vote-count">
+                    ${escapeHtml(voteText)}
+                </div>
+
+
+                <div class="trophy">
+                    ${name === "Gleichstand" ? "⚖️" : "🏆"}
+                </div>
+
+
+                <div class="status">
+                    ${name === "Noch offen"
+                        ? "WARTET AUF STIMMEN"
+                        : name === "Gleichstand"
+                        ? "GLEICHSTAND"
+                        : "GEWINNER"}
+                </div>
+
+
+                <div class="accent-line"></div>
+
+            `;
+
+
+            grid.appendChild(card);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   HTML SICHER MACHEN
+========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value)
+
+        .replaceAll("&", "&amp;")
+
+        .replaceAll("<", "&lt;")
+
+        .replaceAll(">", "&gt;")
+
+        .replaceAll('"', "&quot;")
+
+        .replaceAll("'", "&#039;");
+}
+
+
+/* =========================================================
+   MANUELLE DATEN
+========================================================= */
+
+function getManualWinners() {
+
+    const result = {};
+
+    let totalVotes = 0;
+
+
+    categories.forEach(category => {
+
+        const name =
+            MANUAL_WINNERS[category.name]
+            || "Noch offen";
+
+
+        result[category.name] = {
+
+            name: name,
+
+            votes: 0
+
+        };
+
+    });
+
+
+    updateStats(
+        totalVotes,
+        "MANUELL"
+    );
+
+
+    updateTime();
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   SUPABASE AUTH
+========================================================= */
+
+async function ensureAnonymousSession() {
+
+    if (!supabaseClient) {
+        return false;
+    }
+
+
+    const {
+        data: sessionData
+    } =
+        await supabaseClient.auth.getSession();
+
+
+    if (
+        sessionData &&
+        sessionData.session
+    ) {
+
+        return true;
+
+    }
+
+
+    const {
+        error
+    } =
+        await supabaseClient.auth
+            .signInAnonymously();
+
+
+    if (error) {
+
+        console.error(
+            "Anonymous Login Fehler:",
+            error
+        );
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+/* =========================================================
+   STIMMEN AUS SUPABASE LADEN
+========================================================= */
+
+async function loadOnlineWinners() {
+
+    if (!supabaseClient) {
+
+        return getManualWinners();
+
+    }
+
+
+    const authenticated =
+        await ensureAnonymousSession();
+
+
+    if (!authenticated) {
+
+        throw new Error(
+            "Anonyme Anmeldung konnte nicht gestartet werden."
+        );
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+
+            .from("votes")
+
+            .select(
+                "category,name"
+            );
+
+
+    if (error) {
+
+        throw error;
+
+    }
+
+
+    const counts = {};
+
+    let totalVotes = 0;
+
+
+    categories.forEach(category => {
+
+        counts[category.name] = {};
+
+    });
+
+
+    (data || []).forEach(vote => {
+
+        if (
+            !counts[vote.category]
+        ) {
+            return;
+        }
+
+
+        const name =
+            vote.name;
+
+
+        if (!name) {
+            return;
+        }
+
+
+        if (
+            !counts[vote.category][name]
+        ) {
+
+            counts[vote.category][name] = 0;
+
+        }
+
+
+        counts[vote.category][name]++;
+
+        totalVotes++;
+
+    });
+
+
+    const winners = {};
+
+
+    categories.forEach(category => {
+
+        const categoryVotes =
+            counts[category.name];
+
+
+        const entries =
+            Object.entries(
+                categoryVotes
+            );
+
+
+        if (!entries.length) {
+
+            winners[category.name] = {
+
+                name: "Noch offen",
+
+                votes: 0
+
+            };
+
+            return;
+
+        }
+
+
+        entries.sort(
+            (a, b) =>
+                b[1] - a[1]
+        );
+
+
+        const highest =
+            entries[0][1];
+
+
+        const topNames =
+            entries
+                .filter(
+                    entry =>
+                        entry[1] === highest
+                )
+                .map(
+                    entry =>
+                        entry[0]
+                );
+
+
+        if (topNames.length > 1) {
+
+            winners[category.name] = {
+
+                name: "Gleichstand",
+
+                votes: highest
+
+            };
+
+        } else {
+
+            winners[category.name] = {
+
+                name: topNames[0],
+
+                votes: highest
+
+            };
+
+        }
+
+    });
+
+
+    updateStats(
+        totalVotes,
+        "ONLINE"
+    );
+
+
+    updateTime();
+
+
+    return winners;
+
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+function updateStats(
+    totalVotes,
+    status
+) {
+
+    document.getElementById(
+        "categoryCount"
+    ).textContent =
+        categories.length;
+
+
+    document.getElementById(
+        "voteTotal"
+    ).textContent =
+        totalVotes.toLocaleString(
+            "de-DE"
+        );
+
+
+    document.getElementById(
+        "statusText"
+    ).textContent =
+        status;
+
+}
+
+
+/* =========================================================
+   AKTUALISIERUNGSZEIT
+========================================================= */
+
+function updateTime() {
+
+    const now =
+        new Date();
+
+
+    document.getElementById(
+        "updated"
+    ).textContent =
+        "Aktualisiert um " +
+        now.toLocaleTimeString(
+            "de-DE",
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+}
+
+
+/* =========================================================
+   LADEN
+========================================================= */
+
+async function refreshWinners() {
+
+    try {
+
+        const winners =
+            await loadOnlineWinners();
+
+
+        createCards(
+            winners
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        document.getElementById(
+            "statusText"
+        ).textContent =
+            "FEHLER";
+
+
+        document.getElementById(
+            "updated"
+        ).textContent =
+            "Verbindung fehlgeschlagen";
+
+
+        const grid =
+            document.getElementById(
+                "winnerGrid"
+            );
+
+
+        grid.innerHTML = `
+
+            <div class="message">
+
+                <strong>
+                    Gewinner konnten nicht geladen werden
+                </strong>
+
+                Prüfe deine Supabase-Verbindung
+                und die Einstellungen der Tabelle
+                <b>votes</b>.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+refreshWinners();
+
+
+/*
+   Alle 15 Sekunden aktualisieren.
+   Dadurch erscheinen neue Stimmen
+   automatisch auf der Gewinnerseite.
+*/
+
+setInterval(
+    refreshWinners,
+    15000
+);
+
+</script>
+
+</body>
+</html>
